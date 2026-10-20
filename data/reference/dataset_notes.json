@@ -1,0 +1,14 @@
+{
+  "findings": [
+    "Universe is the open-ended Equity Scheme categories in AMFI NAVAll.txt on the download date, Direct plan, Growth option, with at least 5 years of NAVs.",
+    "Benchmarks are assigned by SEBI category (data/reference/category_benchmarks.csv), not from each scheme's declared benchmark."
+  ],
+  "known_biases": [
+    "Survivorship bias: only schemes alive on the download date are included; merged and closed schemes are missing, so category averages are biased upward.",
+    "Daily data only: no intraday prices; realised volatility is built from daily NAV returns.",
+    "Expense ratio timing: TER history covers only the downloaded months; older periods use the latest known TER.",
+    "SEBI 2018 category reshuffle: schemes were re-categorised in 2018, so the current category may not describe a scheme's earlier portfolio.",
+    "No transaction costs, exit loads or taxes are modelled.",
+    "Sectoral/thematic and focused schemes are compared against a broad-market proxy benchmark."
+  ]
+}

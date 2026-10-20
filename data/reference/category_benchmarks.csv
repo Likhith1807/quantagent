@@ -1,0 +1,13 @@
+sub_category,benchmark_name,note
+Large Cap,NIFTY 100 TRI,SEBI/AMFI tier-1 benchmark for the category
+Large & Mid Cap,NIFTY LargeMidcap 250 TRI,SEBI/AMFI tier-1 benchmark for the category
+Mid Cap,NIFTY Midcap 150 TRI,SEBI/AMFI tier-1 benchmark for the category
+Small Cap,NIFTY Smallcap 250 TRI,SEBI/AMFI tier-1 benchmark for the category
+Multi Cap,NIFTY 500 Multicap 50:25:25 TRI,SEBI/AMFI tier-1 benchmark for the category
+Flexi Cap,NIFTY 500 TRI,SEBI/AMFI tier-1 benchmark for the category
+Focused,NIFTY 500 TRI,Broad-market proxy; schemes declare their own benchmark
+ELSS,NIFTY 500 TRI,SEBI/AMFI tier-1 benchmark for the category
+Value,NIFTY 500 TRI,SEBI/AMFI tier-1 benchmark for the category
+Contra,NIFTY 500 TRI,SEBI/AMFI tier-1 benchmark for the category
+Dividend Yield,NIFTY 500 TRI,Broad-market proxy; schemes declare their own benchmark
+Sectoral/Thematic,NIFTY 500 TRI,Broad-market proxy only; sector schemes track sector indices

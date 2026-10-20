@@ -1,0 +1,970 @@
+{
+ "meta": {
+  "data_nature": "real",
+  "data_version": "1",
+  "data_as_of": "2026-10-19",
+  "n_questions": 35
+ },
+ "summary": {
+  "direct": {
+   "questions": 35,
+   "answer_accuracy": 1.0,
+   "numerical_accuracy": 1.0,
+   "numeric_checks": 35,
+   "tool_selection_accuracy": 1.0,
+   "failure_rate": 0.0,
+   "latency_p50_ms": 10.0,
+   "latency_p95_ms": 241.9399999999991
+  }
+ },
+ "outcomes": {
+  "direct": [
+   {
+    "id": "search_name",
+    "category": "lookup",
+    "mode": "direct",
+    "tool_expected": "search_funds",
+    "tools_called": [
+     "search_funds"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "contains",
+      "path": "items[*].scheme_code",
+      "expected": "103490",
+      "actual": [
+       "103490"
+      ],
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 147.2,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "search_house",
+    "category": "lookup",
+    "mode": "direct",
+    "tool_expected": "search_funds",
+    "tools_called": [
+     "search_funds"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "total_matches",
+      "expected": 3,
+      "actual": 3,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 11.1,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "search_category",
+    "category": "lookup",
+    "mode": "direct",
+    "tool_expected": "search_funds",
+    "tools_called": [
+     "search_funds"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "total_matches",
+      "expected": 16,
+      "actual": 16,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 7.5,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "latest_nav",
+    "category": "lookup",
+    "mode": "direct",
+    "tool_expected": "get_nav_history",
+    "tools_called": [
+     "get_nav_history"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "points[-1].nav",
+      "expected": 120.75,
+      "actual": 120.75,
+      "ok": true
+     },
+     {
+      "kind": "equals",
+      "path": "actual_end",
+      "expected": "2026-10-19",
+      "actual": "2026-10-19",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 44.4,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "nav_count",
+    "category": "lookup",
+    "mode": "direct",
+    "tool_expected": "get_nav_history",
+    "tools_called": [
+     "get_nav_history"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "n_points",
+      "expected": 23,
+      "actual": 23,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 4.5,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "expense_ratio",
+    "category": "lookup",
+    "mode": "direct",
+    "tool_expected": "search_funds",
+    "tools_called": [
+     "search_funds"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "items[0].latest_expense_ratio.value_pct",
+      "expected": 1.14,
+      "actual": 1.14,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 5.6,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "vol_a",
+    "category": "risk",
+    "mode": "direct",
+    "tool_expected": "get_risk_metrics",
+    "tools_called": [
+     "get_risk_metrics"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "volatility",
+      "expected": 0.12447932020684617,
+      "actual": 0.12447932020684617,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 41.6,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "sharpe_a",
+    "category": "risk",
+    "mode": "direct",
+    "tool_expected": "get_risk_metrics",
+    "tools_called": [
+     "get_risk_metrics"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "sharpe",
+      "expected": 0.26863871543831397,
+      "actual": 0.26863871543831397,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 13.4,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "mdd_a",
+    "category": "risk",
+    "mode": "direct",
+    "tool_expected": "get_risk_metrics",
+    "tools_called": [
+     "get_risk_metrics"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "max_drawdown.max_drawdown",
+      "expected": -0.15932852304520684,
+      "actual": -0.15932852304520684,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 11.7,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "sortino_b",
+    "category": "risk",
+    "mode": "direct",
+    "tool_expected": "get_risk_metrics",
+    "tools_called": [
+     "get_risk_metrics"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "sortino",
+      "expected": 0.3863311698375553,
+      "actual": 0.3863311698375553,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 12.8,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "nobs_b",
+    "category": "risk",
+    "mode": "direct",
+    "tool_expected": "get_risk_metrics",
+    "tools_called": [
+     "get_risk_metrics"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "n_obs",
+      "expected": 738,
+      "actual": 738,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 10.0,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "vol_dates",
+    "category": "risk",
+    "mode": "direct",
+    "tool_expected": "get_risk_metrics",
+    "tools_called": [
+     "get_risk_metrics"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "volatility",
+      "expected": 0.12363416787630425,
+      "actual": 0.12363416787630425,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 7.8,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "cagr_a",
+    "category": "returns",
+    "mode": "direct",
+    "tool_expected": "compare_funds",
+    "tools_called": [
+     "compare_funds"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "funds[0].cagr",
+      "expected": 0.09025591707397163,
+      "actual": 0.09025591707397163,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 53.3,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "compare_ab",
+    "category": "compare",
+    "mode": "direct",
+    "tool_expected": "compare_funds",
+    "tools_called": [
+     "compare_funds"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "funds[0].cagr",
+      "expected": 0.09025591707397163,
+      "actual": 0.09025591707397163,
+      "ok": true
+     },
+     {
+      "kind": "equals",
+      "path": "funds[1].cagr",
+      "expected": 0.09123550098138433,
+      "actual": 0.09123550098138433,
+      "ok": true
+     },
+     {
+      "kind": "equals",
+      "path": "funds[1].volatility",
+      "expected": 0.12389138023146802,
+      "actual": 0.12389138023146802,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 21.0,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "compare_abc",
+    "category": "compare",
+    "mode": "direct",
+    "tool_expected": "compare_funds",
+    "tools_called": [
+     "compare_funds"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "funds[0].sharpe",
+      "expected": 0.26863871543831397,
+      "actual": 0.26863871543831397,
+      "ok": true
+     },
+     {
+      "kind": "equals",
+      "path": "funds[1].sharpe",
+      "expected": 0.2767624464051251,
+      "actual": 0.2767624464051251,
+      "ok": true
+     },
+     {
+      "kind": "equals",
+      "path": "funds[2].sharpe",
+      "expected": 0.6977324208707121,
+      "actual": 0.6977324208707121,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 41.3,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "total_return_1y",
+    "category": "returns",
+    "mode": "direct",
+    "tool_expected": "compare_funds",
+    "tools_called": [
+     "compare_funds"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "funds[0].total_return",
+      "expected": -0.09230422026630569,
+      "actual": -0.09230422026630569,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 15.9,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "rank_sharpe_cat",
+    "category": "rank",
+    "mode": "direct",
+    "tool_expected": "rank_funds",
+    "tools_called": [
+     "rank_funds"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "ranked[0].scheme_code",
+      "expected": "149166",
+      "actual": "149166",
+      "ok": true
+     },
+     {
+      "kind": "equals",
+      "path": "ranked[1].scheme_code",
+      "expected": "118935",
+      "actual": "118935",
+      "ok": true
+     },
+     {
+      "kind": "equals",
+      "path": "ranked[2].scheme_code",
+      "expected": "120323",
+      "actual": "120323",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 45.6,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "rank_low_vol",
+    "category": "rank",
+    "mode": "direct",
+    "tool_expected": "rank_funds",
+    "tools_called": [
+     "rank_funds"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "ranked[0].scheme_code",
+      "expected": "120323",
+      "actual": "120323",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 25.4,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "rank_cagr_all",
+    "category": "rank",
+    "mode": "direct",
+    "tool_expected": "rank_funds",
+    "tools_called": [
+     "rank_funds"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "ranked[0].scheme_code",
+      "expected": "130860",
+      "actual": "130860",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 26.2,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "provenance",
+    "category": "provenance",
+    "mode": "direct",
+    "tool_expected": "get_data_provenance",
+    "tools_called": [
+     "get_data_provenance"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "data_nature",
+      "expected": "real",
+      "actual": "real",
+      "ok": true
+     },
+     {
+      "kind": "equals",
+      "path": "data_version",
+      "expected": 1,
+      "actual": 1,
+      "ok": true
+     },
+     {
+      "kind": "equals",
+      "path": "data_as_of",
+      "expected": "2026-10-19",
+      "actual": "2026-10-19",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 764.9,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "quality",
+    "category": "quality",
+    "mode": "direct",
+    "tool_expected": "check_data_quality",
+    "tools_called": [
+     "check_data_quality"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "schemes[0].scheme_code",
+      "expected": "103490",
+      "actual": "103490",
+      "ok": true
+     },
+     {
+      "kind": "in",
+      "path": "schemes[0].status",
+      "expected": [
+       "ok",
+       "warn"
+      ],
+      "actual": "ok",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 56.8,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "forecast",
+    "category": "forecast",
+    "mode": "direct",
+    "tool_expected": "predict_volatility",
+    "tools_called": [
+     "predict_volatility"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "recent_realised_vol.rv_22",
+      "expected": 0.131657603664798,
+      "actual": 0.13165760366479787,
+      "ok": true
+     },
+     {
+      "kind": "equals",
+      "path": "horizon_days",
+      "expected": 21,
+      "actual": 21,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 463.0,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "benchmark_missing",
+    "category": "benchmark",
+    "mode": "direct",
+    "tool_expected": "get_benchmark_comparison",
+    "tools_called": [
+     "get_benchmark_comparison"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "error",
+      "expected": "NOT_FOUND",
+      "actual": "NOT_FOUND",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 4.6,
+    "note": "",
+    "error": "{\"code\": \"NOT_FOUND\", \"message\": \"Scheme 103490 has no benchmark series; pass benchmark explicitly.\", \"details\": {\"available\": []}}",
+    "extra": {}
+   },
+   {
+    "id": "bad_code",
+    "category": "edge",
+    "mode": "direct",
+    "tool_expected": "get_risk_metrics",
+    "tools_called": [
+     "get_risk_metrics"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "error",
+      "expected": "INVALID_INPUT",
+      "actual": "INVALID_INPUT",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 1.3,
+    "note": "",
+    "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"Invalid arguments for get_risk_metrics.\", \"details\": {\"errors\": [{\"field\": \"scheme_code\", \"msg\": \"String should match pattern '^\\\\d{6}$'\"}]}}",
+    "extra": {}
+   },
+   {
+    "id": "unknown_code",
+    "category": "edge",
+    "mode": "direct",
+    "tool_expected": "get_risk_metrics",
+    "tools_called": [
+     "get_risk_metrics"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "error",
+      "expected": "NOT_FOUND",
+      "actual": "NOT_FOUND",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 1.2,
+    "note": "",
+    "error": "{\"code\": \"NOT_FOUND\", \"message\": \"No scheme with code 999999.\", \"details\": {\"hint\": \"Use search_funds to find scheme codes.\"}}",
+    "extra": {}
+   },
+   {
+    "id": "future_date",
+    "category": "edge",
+    "mode": "direct",
+    "tool_expected": "get_risk_metrics",
+    "tools_called": [
+     "get_risk_metrics"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "error",
+      "expected": "INVALID_INPUT",
+      "actual": "INVALID_INPUT",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 1.9,
+    "note": "",
+    "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"end_date 2026-10-30 is in the future.\", \"details\": {}}",
+    "extra": {}
+   },
+   {
+    "id": "reversed_dates",
+    "category": "edge",
+    "mode": "direct",
+    "tool_expected": "get_risk_metrics",
+    "tools_called": [
+     "get_risk_metrics"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "error",
+      "expected": "INVALID_INPUT",
+      "actual": "INVALID_INPUT",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 1.5,
+    "note": "",
+    "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"start_date is after end_date.\", \"details\": {}}",
+    "extra": {}
+   },
+   {
+    "id": "short_range",
+    "category": "edge",
+    "mode": "direct",
+    "tool_expected": "get_risk_metrics",
+    "tools_called": [
+     "get_risk_metrics"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "error",
+      "expected": "INSUFFICIENT_HISTORY",
+      "actual": "INSUFFICIENT_HISTORY",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 2.2,
+    "note": "",
+    "error": "{\"code\": \"INSUFFICIENT_HISTORY\", \"message\": \"Need at least 61 NAVs in the range.\", \"details\": {\"found\": 14, \"required\": 61}}",
+    "extra": {}
+   },
+   {
+    "id": "one_fund_compare",
+    "category": "edge",
+    "mode": "direct",
+    "tool_expected": "compare_funds",
+    "tools_called": [
+     "compare_funds"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "error",
+      "expected": "INVALID_INPUT",
+      "actual": "INVALID_INPUT",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 0.4,
+    "note": "",
+    "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"Invalid arguments for compare_funds.\", \"details\": {\"errors\": [{\"field\": \"scheme_codes\", \"msg\": \"List should have at least 2 items after validation, not 1\"}]}}",
+    "extra": {}
+   },
+   {
+    "id": "metric_and_weights",
+    "category": "edge",
+    "mode": "direct",
+    "tool_expected": "rank_funds",
+    "tools_called": [
+     "rank_funds"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "error",
+      "expected": "INVALID_INPUT",
+      "actual": "INVALID_INPUT",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 0.6,
+    "note": "",
+    "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"Give exactly one of metric or weights.\", \"details\": {}}",
+    "extra": {}
+   },
+   {
+    "id": "unknown_benchmark",
+    "category": "edge",
+    "mode": "direct",
+    "tool_expected": "get_benchmark_comparison",
+    "tools_called": [
+     "get_benchmark_comparison"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "error",
+      "expected": "NOT_FOUND",
+      "actual": "NOT_FOUND",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 1.5,
+    "note": "",
+    "error": "{\"code\": \"NOT_FOUND\", \"message\": \"Unknown benchmark NOPE_TRI.\", \"details\": {\"available\": []}}",
+    "extra": {}
+   },
+   {
+    "id": "bad_period",
+    "category": "edge",
+    "mode": "direct",
+    "tool_expected": "get_risk_metrics",
+    "tools_called": [
+     "get_risk_metrics"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "error",
+      "expected": "INVALID_INPUT",
+      "actual": "INVALID_INPUT",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 0.6,
+    "note": "",
+    "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"Invalid arguments for get_risk_metrics.\", \"details\": {\"errors\": [{\"field\": \"period\", \"msg\": \"Input should be '1y', '3y', '5y' or 'max'\"}]}}",
+    "extra": {}
+   },
+   {
+    "id": "misspelt_arg",
+    "category": "edge",
+    "mode": "direct",
+    "tool_expected": "get_risk_metrics",
+    "tools_called": [
+     "get_risk_metrics"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "error",
+      "expected": "INVALID_INPUT",
+      "actual": "INVALID_INPUT",
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 0.3,
+    "note": "",
+    "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"Unknown arguments for get_risk_metrics.\", \"details\": {\"unknown\": [\"scheme\"], \"allowed\": [\"benchmark\", \"end_date\", \"period\", \"risk_free_annual\", \"scheme_code\", \"start_date\"]}}",
+    "extra": {}
+   },
+   {
+    "id": "empty_search",
+    "category": "edge",
+    "mode": "direct",
+    "tool_expected": "search_funds",
+    "tools_called": [
+     "search_funds"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "total_matches",
+      "expected": 0,
+      "actual": 0,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 5.2,
+    "note": "",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "nav_before_data",
+    "category": "edge",
+    "mode": "direct",
+    "tool_expected": "get_nav_history",
+    "tools_called": [
+     "get_nav_history"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "n_points",
+      "expected": 0,
+      "actual": 0,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 2.9,
+    "note": "",
+    "error": null,
+    "extra": {}
+   }
+  ]
+ }
+}

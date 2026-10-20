@@ -1,0 +1,5 @@
+# Reference files are small text tables; keep them byte-exact (their SHA-256 is recorded at ingest)
+*.csv -text
+*.db binary
+*.joblib binary
+data/reference/* -text
