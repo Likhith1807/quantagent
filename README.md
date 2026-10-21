@@ -170,7 +170,7 @@ little history. Full report: [reports/eval_report.md](reports/eval_report.md).
 
 | Mode | Answer accuracy | Numerical accuracy | Tool selection | Failure rate | Latency p50 / p95 |
 |---|---|---|---|---|---|
-| Direct analytics baseline (expected tool, fixed arguments), real data | 100% (36/36) | 100% (37 checks, rel. tol 1e-9) | 100% by construction | 0% | 98 ms / 370 ms |
+| Direct analytics baseline (expected tool, fixed arguments), real data | 100% (36/36) | 100% (37 checks, rel. tol 1e-9) | 100% by construction | 0% | 32-39 ms / 279-304 ms |
 | Agent (LLM chooses tools from the question text) | not run | not run | not run | not run | not run |
 
 **The agent has not been evaluated yet,** so this README makes no claim about how accurately an LLM
@@ -180,8 +180,11 @@ a number only when a verified claim cites a tool output equal to the expected va
 tool-selection accuracy, failure rate, latency and token cost per question. CI runs the direct mode on
 the synthetic fixture on every push and fails below 100%.
 
-Latency is wall-clock time per tool call on a Windows laptop with other programs running; repeated
-identical calls varied between 44 and 340 ms, so treat it as an order of magnitude.
+Latency is wall-clock time per tool call, measured in the Docker runtime image (Linux, Python 3.12) with
+the database mounted read-only: three runs gave p50 32, 36 and 39 ms and p95 279 to 304 ms. That
+container ran under Docker Desktop (WSL2) on a laptop, not on a dedicated server. The slowest calls are
+`get_data_provenance` and `predict_volatility`. To repeat: `docker run --rm -v <db dir>:/app/var/db:ro
+-v <model dir>:/app/var/models:ro quantagent eval --out-dir /tmp/r`.
 
 Known failures: none in direct mode on the current data. Loading real benchmarks exposed a bug that the
 first question set missed: `get_risk_metrics` and `get_benchmark_comparison` returned different betas for
@@ -290,5 +293,5 @@ Docs: [DATA_PROFILE.md](docs/DATA_PROFILE.md) (sources, download dates, coverage
 
 ## Licence
 
-MIT for the code in this repository ([LICENSE](LICENSE)). Downloaded data stays under its publishers'
-terms and is not committed.
+MIT, see [LICENSE](LICENSE). This covers the code in this repository. Downloaded data stays under its
+publishers' terms and is not committed.
