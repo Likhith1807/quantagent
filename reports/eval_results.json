@@ -1,20 +1,20 @@
 {
  "meta": {
   "data_nature": "real",
-  "data_version": "1",
+  "data_version": "3",
   "data_as_of": "2026-10-19",
-  "n_questions": 35
+  "n_questions": 36
  },
  "summary": {
   "direct": {
-   "questions": 35,
+   "questions": 36,
    "answer_accuracy": 1.0,
    "numerical_accuracy": 1.0,
-   "numeric_checks": 35,
+   "numeric_checks": 37,
    "tool_selection_accuracy": 1.0,
    "failure_rate": 0.0,
-   "latency_p50_ms": 10.0,
-   "latency_p95_ms": 241.9399999999991
+   "latency_p50_ms": 97.65,
+   "latency_p95_ms": 370.2
   }
  },
  "outcomes": {
@@ -41,7 +41,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 147.2,
+    "latency_ms": 346.3,
     "note": "",
     "error": null,
     "extra": {}
@@ -66,7 +66,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 11.1,
+    "latency_ms": 21.5,
     "note": "",
     "error": null,
     "extra": {}
@@ -91,7 +91,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 7.5,
+    "latency_ms": 23.9,
     "note": "",
     "error": null,
     "extra": {}
@@ -123,7 +123,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 44.4,
+    "latency_ms": 260.7,
     "note": "",
     "error": null,
     "extra": {}
@@ -148,7 +148,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 4.5,
+    "latency_ms": 16.1,
     "note": "",
     "error": null,
     "extra": {}
@@ -173,7 +173,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 5.6,
+    "latency_ms": 21.0,
     "note": "",
     "error": null,
     "extra": {}
@@ -198,7 +198,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 41.6,
+    "latency_ms": 307.6,
     "note": "",
     "error": null,
     "extra": {}
@@ -216,14 +216,14 @@
      {
       "kind": "equals",
       "path": "sharpe",
-      "expected": 0.26863871543831397,
-      "actual": 0.26863871543831397,
+      "expected": 0.3020945091309895,
+      "actual": 0.3020945091309895,
       "ok": true
      }
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 13.4,
+    "latency_ms": 127.5,
     "note": "",
     "error": null,
     "extra": {}
@@ -248,7 +248,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 11.7,
+    "latency_ms": 118.1,
     "note": "",
     "error": null,
     "extra": {}
@@ -266,14 +266,14 @@
      {
       "kind": "equals",
       "path": "sortino",
-      "expected": 0.3863311698375553,
-      "actual": 0.3863311698375553,
+      "expected": 0.4339085034592715,
+      "actual": 0.4339085034592715,
       "ok": true
      }
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 12.8,
+    "latency_ms": 121.1,
     "note": "",
     "error": null,
     "extra": {}
@@ -298,7 +298,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 10.0,
+    "latency_ms": 125.1,
     "note": "",
     "error": null,
     "extra": {}
@@ -323,7 +323,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 7.8,
+    "latency_ms": 101.6,
     "note": "",
     "error": null,
     "extra": {}
@@ -348,7 +348,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 53.3,
+    "latency_ms": 225.7,
     "note": "",
     "error": null,
     "extra": {}
@@ -387,7 +387,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 21.0,
+    "latency_ms": 103.1,
     "note": "",
     "error": null,
     "extra": {}
@@ -405,28 +405,28 @@
      {
       "kind": "equals",
       "path": "funds[0].sharpe",
-      "expected": 0.26863871543831397,
-      "actual": 0.26863871543831397,
+      "expected": 0.3020945091309895,
+      "actual": 0.3020945091309895,
       "ok": true
      },
      {
       "kind": "equals",
       "path": "funds[1].sharpe",
-      "expected": 0.2767624464051251,
-      "actual": 0.2767624464051251,
+      "expected": 0.310378575096453,
+      "actual": 0.310378575096453,
       "ok": true
      },
      {
       "kind": "equals",
       "path": "funds[2].sharpe",
-      "expected": 0.6977324208707121,
-      "actual": 0.6977324208707121,
+      "expected": 0.7265781063161817,
+      "actual": 0.7265781063161817,
       "ok": true
      }
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 41.3,
+    "latency_ms": 148.1,
     "note": "",
     "error": null,
     "extra": {}
@@ -451,7 +451,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 15.9,
+    "latency_ms": 75.6,
     "note": "",
     "error": null,
     "extra": {}
@@ -490,7 +490,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 45.6,
+    "latency_ms": 195.7,
     "note": "",
     "error": null,
     "extra": {}
@@ -515,7 +515,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 25.4,
+    "latency_ms": 93.7,
     "note": "",
     "error": null,
     "extra": {}
@@ -540,7 +540,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 26.2,
+    "latency_ms": 166.7,
     "note": "",
     "error": null,
     "extra": {}
@@ -565,8 +565,8 @@
      {
       "kind": "equals",
       "path": "data_version",
-      "expected": 1,
-      "actual": 1,
+      "expected": 3,
+      "actual": 3,
       "ok": true
      },
      {
@@ -579,7 +579,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 764.9,
+    "latency_ms": 441.9,
     "note": "",
     "error": null,
     "extra": {}
@@ -614,7 +614,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 56.8,
+    "latency_ms": 288.9,
     "note": "",
     "error": null,
     "extra": {}
@@ -646,13 +646,13 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 463.0,
+    "latency_ms": 1415.3,
     "note": "",
     "error": null,
     "extra": {}
    },
    {
-    "id": "benchmark_missing",
+    "id": "benchmark_te",
     "category": "benchmark",
     "mode": "direct",
     "tool_expected": "get_benchmark_comparison",
@@ -662,17 +662,43 @@
     "tool_correct": true,
     "checks": [
      {
-      "kind": "error",
-      "expected": "NOT_FOUND",
-      "actual": "NOT_FOUND",
+      "kind": "equals",
+      "path": "tracking_error",
+      "expected": 0.04774220475602607,
+      "actual": 0.04774220475602607,
       "ok": true
      }
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 4.6,
+    "latency_ms": 287.2,
     "note": "",
-    "error": "{\"code\": \"NOT_FOUND\", \"message\": \"Scheme 103490 has no benchmark series; pass benchmark explicitly.\", \"details\": {\"available\": []}}",
+    "error": null,
+    "extra": {}
+   },
+   {
+    "id": "risk_beta",
+    "category": "benchmark",
+    "mode": "direct",
+    "tool_expected": "get_risk_metrics",
+    "tools_called": [
+     "get_risk_metrics"
+    ],
+    "tool_correct": true,
+    "checks": [
+     {
+      "kind": "equals",
+      "path": "beta",
+      "expected": 0.8166693785098219,
+      "actual": 0.8166693785098219,
+      "ok": true
+     }
+    ],
+    "correct": true,
+    "failed": false,
+    "latency_ms": 122.4,
+    "note": "",
+    "error": null,
     "extra": {}
    },
    {
@@ -694,7 +720,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 1.3,
+    "latency_ms": 2.1,
     "note": "",
     "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"Invalid arguments for get_risk_metrics.\", \"details\": {\"errors\": [{\"field\": \"scheme_code\", \"msg\": \"String should match pattern '^\\\\d{6}$'\"}]}}",
     "extra": {}
@@ -718,7 +744,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 1.2,
+    "latency_ms": 5.0,
     "note": "",
     "error": "{\"code\": \"NOT_FOUND\", \"message\": \"No scheme with code 999999.\", \"details\": {\"hint\": \"Use search_funds to find scheme codes.\"}}",
     "extra": {}
@@ -742,9 +768,9 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 1.9,
+    "latency_ms": 44.6,
     "note": "",
-    "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"end_date 2026-10-30 is in the future.\", \"details\": {}}",
+    "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"end_date 2026-10-31 is in the future.\", \"details\": {}}",
     "extra": {}
    },
    {
@@ -766,7 +792,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 1.5,
+    "latency_ms": 44.0,
     "note": "",
     "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"start_date is after end_date.\", \"details\": {}}",
     "extra": {}
@@ -790,7 +816,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 2.2,
+    "latency_ms": 42.9,
     "note": "",
     "error": "{\"code\": \"INSUFFICIENT_HISTORY\", \"message\": \"Need at least 61 NAVs in the range.\", \"details\": {\"found\": 14, \"required\": 61}}",
     "extra": {}
@@ -814,7 +840,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 0.4,
+    "latency_ms": 1.7,
     "note": "",
     "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"Invalid arguments for compare_funds.\", \"details\": {\"errors\": [{\"field\": \"scheme_codes\", \"msg\": \"List should have at least 2 items after validation, not 1\"}]}}",
     "extra": {}
@@ -838,7 +864,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 0.6,
+    "latency_ms": 2.5,
     "note": "",
     "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"Give exactly one of metric or weights.\", \"details\": {}}",
     "extra": {}
@@ -862,9 +888,9 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 1.5,
+    "latency_ms": 36.0,
     "note": "",
-    "error": "{\"code\": \"NOT_FOUND\", \"message\": \"Unknown benchmark NOPE_TRI.\", \"details\": {\"available\": []}}",
+    "error": "{\"code\": \"NOT_FOUND\", \"message\": \"Unknown benchmark NOPE_TRI.\", \"details\": {\"available\": [\"NIFTY100_TRI\", \"NIFTY500_MULTICAP_TRI\", \"NIFTY500_TRI\", \"NIFTY50_TRI\", \"NIFTY_LARGEMIDCAP250_TRI\", \"NIFTY_MIDCAP150_TRI\", \"NIFTY_SMALLCAP250_TRI\"]}}",
     "extra": {}
    },
    {
@@ -886,7 +912,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 0.6,
+    "latency_ms": 1.8,
     "note": "",
     "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"Invalid arguments for get_risk_metrics.\", \"details\": {\"errors\": [{\"field\": \"period\", \"msg\": \"Input should be '1y', '3y', '5y' or 'max'\"}]}}",
     "extra": {}
@@ -910,7 +936,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 0.3,
+    "latency_ms": 1.2,
     "note": "",
     "error": "{\"code\": \"INVALID_INPUT\", \"message\": \"Unknown arguments for get_risk_metrics.\", \"details\": {\"unknown\": [\"scheme\"], \"allowed\": [\"benchmark\", \"end_date\", \"period\", \"risk_free_annual\", \"scheme_code\", \"start_date\"]}}",
     "extra": {}
@@ -935,7 +961,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 5.2,
+    "latency_ms": 20.2,
     "note": "",
     "error": null,
     "extra": {}
@@ -960,7 +986,7 @@
     ],
     "correct": true,
     "failed": false,
-    "latency_ms": 2.9,
+    "latency_ms": 9.3,
     "note": "",
     "error": null,
     "extra": {}

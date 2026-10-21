@@ -143,6 +143,9 @@ def build(ref: Reference, model_available: bool) -> list[Question]:
         add("benchmark_te", "benchmark", f"What was the {period} tracking error of {na} against its benchmark?",
             "get_benchmark_comparison", {"scheme_code": a, "period": period},
             Expect("equals", "tracking_error", ref.tracking_error(a, bidx, years)))
+        add("risk_beta", "benchmark", f"What was the {period} beta of {na} against its benchmark?",
+            "get_risk_metrics", {"scheme_code": a, "period": period},
+            Expect("equals", "beta", ref.beta(a, bidx, years)))
     else:
         add("benchmark_missing", "benchmark", f"Did {na} beat its benchmark over {period}?",
             "get_benchmark_comparison", {"scheme_code": a, "period": period}, Expect("error", value="NOT_FOUND"))

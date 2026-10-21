@@ -1,5 +1,6 @@
 from typing import Annotated
 
+import pandas as pd
 from pydantic import Field
 
 from ..analytics import MIN_SHARED_OBS_REGRESSION
@@ -57,7 +58,7 @@ def get_benchmark_comparison(
                          {"available": [b["index_name"] for b in repo.benchmark_names()]})
     nav, start, end, warnings = load_nav_window(repo, svc.settings, scheme_code, period, start_date, end_date)
     warnings = base_warnings(repo) + warnings
-    bnav = clip(repo.benchmark_series(bench["index_name"]), start, end)
+    bnav = clip(repo.benchmark_series(bench["index_name"], pd.Timestamp(start).date(), pd.Timestamp(end).date()), start, end)
     f_nav, b_nav = align(nav, bnav)
     if len(f_nav) < 2:
         raise QuantError("NO_OVERLAP", "Fund and benchmark share no dates in this window.",

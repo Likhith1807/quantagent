@@ -26,10 +26,12 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--max-schemes", type=int, default=None)
     ap.add_argument("--first-test-year", type=int, default=None)
     ap.add_argument("--gap-days", type=int, default=30)
+    ap.add_argument("--holdout-years", type=int, default=5)
     ap.add_argument("--seed", type=int, default=42)
     a = ap.parse_args(argv)
     repo = Repository(make_readonly_engine(s.db_url, timeout_s=600))
-    cfg = Config(garch=not a.no_garch, first_test_year=a.first_test_year, gap_days=a.gap_days, seed=a.seed)
+    cfg = Config(garch=not a.no_garch, first_test_year=a.first_test_year, gap_days=a.gap_days, seed=a.seed,
+                 holdout_years=a.holdout_years)
     out = run(repo, cfg, a.registry, a.report, a.experiments, Path.cwd(), a.max_schemes)
     print(json.dumps({"version": out["version"], "models": out["models"], "selected": out["selected"]}, indent=2))
 

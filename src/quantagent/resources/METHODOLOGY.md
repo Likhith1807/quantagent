@@ -71,13 +71,25 @@ direct_growth` keeps one plan per scheme, preferring Direct.
   `sqrt(252/21 * sum r_{t+i}^2)`.
 * **Features at origin t** (data up to t only): realised vol over 1, 5, 22, 63 and 252 days, EWMA
   vol (lambda 0.94), 21- and 63-day log returns, drawdown from the 252-day high.
-* **Models:** ridge regression and gradient boosting on log volatility (Duan smearing back to the
-  vol scale). **Baselines:** naive (last 22-day realised vol), EWMA, HAR-RV (log, pooled OLS on
-  daily/weekly/monthly RV) and GARCH(1,1) per scheme.
+* **Models:** ridge regression and gradient boosting on log volatility. **Baselines:** naive (last
+  22-day realised vol), EWMA, HAR-RV (log, pooled OLS on daily/weekly/monthly RV) and GARCH(1,1)
+  per scheme.
+* **Back-transformation:** the regression models (HAR-RV, ridge, boosting) predict log volatility.
+  `exp(E[log vol])` underestimates `E[vol]`, so forecasts are multiplied by Duan's smearing factor,
+  the mean of `exp(residual)` on the training rows.
 * **Evaluation:** walk-forward by calendar year, models refitted each fold. Training rows are
   purged so their target windows end at least 30 days before the test year (embargo); GARCH
-  parameters use returns up to that cut-off only. Losses: QLIKE on variance and MAE on volatility;
-  Diebold-Mariano tests on the monthly mean QLIKE differential (Newey-West lag 1, HLN correction).
+  parameters use returns up to that cut-off only. Training rows whose target window contains a
+  suspect NAV (a daily move above 15% or 5+ identical NAVs) are dropped; those windows are in the
+  past at fit time.
+* **Selection and test periods:** folds before the last five calendar years are the selection
+  period, and the served model is the one of HAR-RV, ridge and boosting with the lowest mean QLIKE
+  there. The last five years are the test period, used for no choice; reported scores come from it.
+* **Test rows:** the headline uses every test row. A second view drops rows whose scheme had a
+  suspect NAV in the 252 trading days up to the origin (known at forecast time). Dropping rows by
+  their target window uses the future and is shown only as a diagnostic.
+* **Losses:** QLIKE on variance and MAE on volatility; Diebold-Mariano tests of the served model
+  against each other model on the monthly mean QLIKE differential (Newey-West lag 1, HLN correction).
 * The served model, its config, seed and scores live in a hash-checked registry
   (`models/registry/`); `reports/vol_model_report.md` has the latest results.
 
@@ -85,6 +97,8 @@ direct_growth` keeps one plan per scheme, preferring Direct.
 
 * **Survivorship:** only schemes alive on the download date are included; merged and closed
   schemes are missing, which biases category averages upward.
+* **Survivor selection in the volatility backtest:** schemes are chosen for having five years of
+  history as of the download date, so every test year contains only funds that survived to 2026.
 * **Daily data only:** no intraday prices.
 * **Expense ratio timing:** TER history covers only the downloaded months; older windows are
   shown with the latest known TER.

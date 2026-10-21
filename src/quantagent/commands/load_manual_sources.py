@@ -31,7 +31,10 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--out", type=Path, default=Path(s.staging_dir))
     ap.add_argument("--tri-dir", type=Path, default=Path(s.external_dir) / "niftyindices")
     ap.add_argument("--tbill", type=Path, default=Path(s.external_dir) / "tbill_91d.csv")
-    ap.add_argument("--tbill-source", default="RBI DBIE: 91-day Treasury Bill primary market cut-off yield")
+    ap.add_argument("--tbill-source", default="RBI DBIE: Auctions of 91-Day Government of India Treasury Bills, "
+                    "implicit yield at cut-off price (percent, actual/365)")
+    ap.add_argument("--tbill-url", default="https://data.rbi.org.in/DBIE/ (Statistics > Financial Market > "
+                    "Government Securities Market > Auctions of 91-Day Government of India Treasury Bills)")
     ap.add_argument("--retrieved", default=None, help="download date (YYYY-MM-DD); default: file timestamps")
     a = ap.parse_args(argv)
     a.out.mkdir(parents=True, exist_ok=True)
@@ -59,7 +62,7 @@ def main(argv: list[str] | None = None) -> None:
         rf = tbill.parse_tbill_csv(a.tbill, a.tbill_source)
         rf.to_csv(a.out / "risk_free_rates.csv", index=False)
         files["risk_free_rates.csv"] = {
-            "source": a.tbill_source, "url": "https://data.rbi.org.in/ (DBIE) or https://www.ccilindia.com/",
+            "source": a.tbill_source, "url": a.tbill_url,
             "retrieved_at": a.retrieved or _file_info([a.tbill])[a.tbill.name]["modified"],
             "licence": "RBI / CCIL public statistics; their terms of use apply",
             "coverage": f"{rf['date'].min()} to {rf['date'].max()} ({len(rf)} observations)",

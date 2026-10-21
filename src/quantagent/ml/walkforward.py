@@ -6,6 +6,15 @@ Folds are calendar years. For a fold starting on date S:
   * test rows:     origins dated in [S, next fold start), sampled every TEST_EVERY observations
   * GARCH:         parameters estimated on returns up to S - gap only
 Models are refitted from scratch on every fold.
+
+Model selection and testing use different years. Folds before the hold-out start (the last
+`holdout_years` calendar years by default) form the selection period: the served model is the one
+with the lowest QLIKE there. Folds from the hold-out start on are the test period; they play no part
+in any choice, and their scores are the reported results.
+
+The headline scores use every test row. A second view drops test rows whose scheme had a suspect
+NAV in the year before the origin, which is known when the forecast is made. Filtering on the
+target window itself would use the future, so that view is reported only as a diagnostic.
 """
 import time
 from dataclasses import dataclass, field
@@ -41,6 +50,7 @@ class Config:
     horizon: int = 21
     gap_days: int = 30
     first_test_year: int | None = None  # default: 4 years after the first origin
+    holdout_years: int = 5  # the last N calendar years are the untouched test period
     min_train_rows: int = 500
     seed: int = 42
     garch: bool = True
@@ -84,6 +94,10 @@ def fold_starts(p: pd.DataFrame, cfg: Config) -> list[pd.Timestamp]:
     return [pd.Timestamp(f"{y}-01-01") for y in range(y0, last.year + 1)]
 
 
+def holdout_start(p: pd.DataFrame, cfg: Config) -> pd.Timestamp:
+    return pd.Timestamp(f"{p['date'].max().year - cfg.holdout_years + 1}-01-01")
+
+
 def walk_forward(p: pd.DataFrame, navs: dict[str, pd.Series], cfg: Config,
                  log=lambda *a: None) -> tuple[pd.DataFrame, list[dict]]:
     """Out-of-sample predictions for every test row (one column per model) and per-fold info."""
@@ -122,30 +136,61 @@ def walk_forward(p: pd.DataFrame, navs: dict[str, pd.Series], cfg: Config,
     return preds, folds
 
 
-def _scores(rows: pd.DataFrame, models: list[str]) -> dict:
+def _scores(rows: pd.DataFrame, models: list[str], ref: str | None = None) -> dict:
+    """QLIKE/MAE per model; with `ref`, DM tests of ref against every other model on the monthly
+    cross-sectional mean QLIKE (Newey-West lag 1: adjacent months' targets can overlap).
+    Negative DM statistic = ref has the lower loss."""
     month = rows["date"].dt.to_period("M")
-    res: dict = {"n_test": len(rows), "n_months": int(month.nunique()), "models": {}, "dm": {}}
+    res: dict = {"n_test": len(rows), "n_months": int(month.nunique()),
+                 "period": [str(rows["date"].min().date()), str(rows["date"].max().date())] if len(rows) else None,
+                 "models": {}, "dm": {}}
     losses = {}
     for mdl in models:
         q, a = qlike(rows["y"], rows[mdl]), mae(rows["y"], rows[mdl])
         losses[mdl] = pd.Series(q, index=rows.index).groupby(month).mean()
         res["models"][mdl] = {"qlike": float(np.mean(q)), "qlike_median": float(np.median(q)),
                               "mae": float(np.mean(a))}
-    for mdl in [m for m in models if m in MODELS or m == "har"]:
-        for b in [b for b in models if b in BASELINES and b != mdl]:
-            dm = diebold_mariano(losses[mdl].to_numpy(), losses[b].to_numpy(), lag=1)
-            res["dm"][f"{mdl}_vs_{b}"] = {
+    if ref:
+        for other in [m for m in models if m != ref]:
+            dm = diebold_mariano(losses[ref].to_numpy(), losses[other].to_numpy(), lag=1)
+            res["dm"][f"{ref}_vs_{other}"] = {
                 "stat": dm.statistic, "p_value": dm.p_value, "mean_qlike_diff": dm.mean_diff, "months": dm.n,
-                "months_better_pct": float(100 * (losses[mdl] < losses[b]).mean())}
+                "months_better_pct": float(100 * (losses[ref] < losses[other]).mean())}
     return res
 
 
-def evaluate(preds: pd.DataFrame, models: list[str]) -> dict:
-    """QLIKE/MAE per model and DM tests on the monthly cross-sectional mean QLIKE (NW lag 1:
-    adjacent months' targets can overlap). Scored on clean target windows (primary) and on all."""
+def evaluate(preds: pd.DataFrame, models: list[str], start: pd.Timestamp) -> dict:
+    """Pick the served model on the selection period (test origins before `start`), then score
+    every model on the hold-out period (origins from `start`)."""
     rows = preds.dropna(subset=models)
-    clean = rows[rows["clean"].astype(bool)]
-    res = _scores(clean, models)
-    res["all_rows"] = _scores(rows, models)
-    res["excluded_suspect"] = int(len(rows) - len(clean))
-    return res
+    sel_rows, test_rows = rows[rows["date"] < start], rows[rows["date"] >= start]
+    if sel_rows.empty or test_rows.empty:
+        raise RuntimeError(f"need test folds both before and after the hold-out start {start.date()}")
+    selection = _scores(sel_rows, models)
+    best = min(["har", *MODELS], key=lambda m: selection["models"][m]["qlike"])
+    test = _scores(test_rows, models, ref=best)
+    known = test_rows[~test_rows["suspect_past"].astype(bool)]
+    filtered = _scores(known, models, ref=best)
+    filtered["excluded"] = int(len(test_rows) - len(known))
+    clean = test_rows[test_rows["clean"].astype(bool)]
+    diagnostic = _scores(clean, models, ref=best)
+    diagnostic["excluded"] = int(len(test_rows) - len(clean))
+
+    others = {b: test["models"][b]["qlike"] for b in models if b in BASELINES and b != best}
+    best_other = min(others, key=others.get)
+    ml = min(MODELS, key=lambda m: selection["models"][m]["qlike"])
+    q = test["models"][best]["qlike"]
+    selected = {
+        "model": best, "chosen_on": "selection period (folds before the hold-out start)",
+        "holdout_start": str(start.date()),
+        "selection_qlike": {m: selection["models"][m]["qlike"] for m in ["har", *MODELS]},
+        "best_other_baseline": best_other,
+        "beats_all_baselines": all(q < v for v in others.values()),
+        "ml_beats_har": selection["models"][ml]["qlike"] < selection["models"]["har"]["qlike"],
+        "ml_beats_har_test": min(test["models"][m]["qlike"] for m in MODELS) < test["models"]["har"]["qlike"],
+        "qlike_vs_ewma_pct": 100 * (q / test["models"]["ewma"]["qlike"] - 1),
+        "qlike_vs_best_other_pct": 100 * (q / others[best_other] - 1)}
+    return {"protocol": "v2: select on earlier folds, report later folds", "selection": selection, "test": test,
+            "test_filtered_at_origin": filtered, "test_clean_target_ex_post": diagnostic, "selected": selected,
+            # what the tool and the README read: hold-out scores on all rows
+            "models": test["models"], "dm": test["dm"], "n_test": test["n_test"], "n_months": test["n_months"]}

@@ -248,11 +248,13 @@ class ProvenanceResult(ToolResult):
 
 class VolModelInfo(BaseModel):
     version: str
-    kind: str = Field(description="har | ridge | gbm: log-volatility regression chosen by walk-forward QLIKE")
+    kind: str = Field(description="har | ridge | gbm: log-volatility regression with the lowest QLIKE on the "
+                                  "selection years")
     trained_data_version: int
     trained_data_nature: str
     train_range: list[str]
-    oos_qlike: float = Field(description="Walk-forward out-of-sample QLIKE of this model kind.")
+    oos_qlike: float = Field(description="QLIKE of this model kind on the held-out test years (all test rows); "
+                                         "the model was chosen on earlier years.")
     oos_qlike_ewma: float
     oos_qlike_har: float
     beats_all_baselines: bool

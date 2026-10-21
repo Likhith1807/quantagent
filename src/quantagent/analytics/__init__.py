@@ -1,7 +1,7 @@
 """Pure analytics on pandas Series indexed by Timestamp. No database access."""
 import math
 
-CALC_VERSION = "1.0.0"
+CALC_VERSION = "1.1.0"
 ANNUALISATION = 252
 MIN_RETURNS_RISK = 60  # volatility, Sharpe, Sortino
 MIN_SHARED_OBS_REGRESSION = 120  # alpha, beta, R^2

@@ -37,8 +37,8 @@ def predict_volatility(
 
     Use when asked how volatile a fund is likely to be next month, or for a forward-looking risk
     estimate. The model is a log-volatility regression on realised-volatility features (HAR-RV
-    style), selected by walk-forward evaluation against naive, EWMA, HAR-RV and GARCH baselines;
-    its out-of-sample scores are returned in `model`. Do NOT use for historical volatility; use
+    style), chosen on earlier walk-forward years and scored on later held-out years against naive,
+    EWMA, HAR-RV and GARCH baselines; those held-out scores are returned in `model`. Do NOT use for historical volatility; use
     get_risk_metrics. Fails with MODEL_UNAVAILABLE if no model has been trained (scripts/train_vol.py).
     """
     svc = get_services()

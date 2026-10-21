@@ -79,9 +79,17 @@ def target_clean(r: pd.Series, horizon: int = HORIZON) -> pd.Series:
     return fwd.fillna(1) == 0
 
 
+def suspect_before(r: pd.Series, lookback: int = ANNUAL) -> pd.Series:
+    """True when a suspect day lies in r_{t-lookback+1}..r_t: known at the forecast origin, so it
+    can be used to filter test rows without looking at the target window."""
+    return suspect_days(r).astype(float).rolling(lookback, min_periods=1).max() > 0
+
+
 def panel(navs: dict[str, pd.Series], horizon: int = HORIZON) -> pd.DataFrame:
     """Long panel: one row per (scheme, origin) with features, target, target end date and
-    whether the target window is free of suspect NAVs."""
+    whether the target window is free of suspect NAVs (`clean`, ex post: used only to filter training
+    rows, whose targets are in the past at fit time) and whether the past year had one (`suspect_past`,
+    known at the origin)."""
     frames = []
     for code, nav in navs.items():
         r = log_returns(nav)
@@ -91,11 +99,12 @@ def panel(navs: dict[str, pd.Series], horizon: int = HORIZON) -> pd.DataFrame:
         f["y"] = target(r, horizon)
         f["target_end"] = target_end(r.index, horizon)
         f["clean"] = target_clean(r, horizon)
+        f["suspect_past"] = suspect_before(r)
         f["r_t"] = r
         f["scheme_code"] = code
         frames.append(f.iloc[MIN_HISTORY - 1:])
     if not frames:
-        return pd.DataFrame(columns=[*FEATURES, "n_hist", "y", "target_end", "clean", "r_t", "scheme_code"])
+        return pd.DataFrame(columns=[*FEATURES, "n_hist", "y", "target_end", "clean", "suspect_past", "r_t", "scheme_code"])
     p = pd.concat(frames)
     p.index.name = "date"
     return p.reset_index()

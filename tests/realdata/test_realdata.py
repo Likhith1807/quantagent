@@ -128,6 +128,28 @@ def test_benchmark_tracking_error_matches(raw):
     assert out.tracking_error == pytest.approx((r[code] - r[index]).std() * np.sqrt(252), rel=TOL)
 
 
+@pytest.mark.parametrize("i", range(5))
+def test_alpha_beta_match_independent_and_agree_across_tools(raw, i):
+    navs, bench, rf = raw
+    if bench is None:
+        pytest.skip("no Nifty TRI files loaded (quantagent load-manual)")
+    repo = _base.get_services().repo
+    code = [c for c in _codes(navs, 50) if repo.get_scheme(c)["benchmark_index"] in bench.columns][i]
+    index = repo.get_scheme(code)["benchmark_index"]
+    end = navs.index.max()
+    j = pd.concat([navs[code], bench[index]], axis=1).dropna()
+    j = j[j.index >= end - pd.DateOffset(years=3)]
+    r = j.pct_change().dropna()
+    ex = r.sub(_rf_daily(rf, j.index).reindex(r.index), axis=0)
+    beta = ex[code].cov(ex[index]) / ex[index].var()
+    alpha = (ex[code].mean() - beta * ex[index].mean()) * 252
+    risk = get_risk_metrics(scheme_code=code, period="3y")
+    comp = get_benchmark_comparison(scheme_code=code, period="3y")
+    for out in (risk, comp):
+        assert out.beta == pytest.approx(beta, rel=TOL)
+        assert out.alpha == pytest.approx(alpha, rel=TOL)
+
+
 def test_provenance_records_real_sources(raw):
     p = get_data_provenance()
     assert p.data_nature == "real"

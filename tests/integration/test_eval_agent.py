@@ -79,6 +79,15 @@ async def test_oracle_agent_scores_like_direct(questions, tmp_path):
                     {"direct": direct, "agent": agent}, "fix notes")
     assert "| agent |" in report and "fix notes" in report
     assert len(list(Path(tmp_path).glob("*.json"))) == len(questions)
+    # token and cost reporting (the scripted LLM reports zero usage, so fake some)
+    for o in agent:
+        o.extra["usage"] = {"input_tokens": 1000, "output_tokens": 200}
+    priced = summarise(agent, prices=(3.0, 15.0))
+    assert priced["input_tokens_per_question"] == 1000 and priced["output_tokens_per_question"] == 200
+    assert priced["cost_usd_per_question"] == pytest.approx((1000 * 3 + 200 * 15) / 1e6)
+    assert "cost_usd_per_question" not in summarise(agent) and "input_tokens_per_question" not in d
+    assert "per question at 3.0/15.0 USD" in render({"data_nature": "s", "data_version": 1, "data_as_of": "x",
+                                                     "n_questions": 1}, {"agent": agent}, prices=(3.0, 15.0))
 
 
 async def test_wrong_tool_agent_is_penalised(questions):

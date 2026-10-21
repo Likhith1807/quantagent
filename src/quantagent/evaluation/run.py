@@ -139,20 +139,31 @@ async def run_agent(session, questions: list[Question], llm, log_dir: Path | Non
     return outs
 
 
-def summarise(outcomes: list[Outcome]) -> dict:
+def summarise(outcomes: list[Outcome], prices: tuple[float, float] | None = None) -> dict:
+    """Accuracy, failure and latency figures; for agent runs also mean tokens per question and, when
+    `prices` (USD per million input and output tokens) is given, mean cost per question."""
     if not outcomes:
         return {}
     lat = np.array([o.latency_ms for o in outcomes])
     numeric = [c for o in outcomes for c in o.checks if c["kind"] in ("equals", "in", "contains")]
-    return {"questions": len(outcomes), "answer_accuracy": float(np.mean([o.correct for o in outcomes])),
-            "numerical_accuracy": float(np.mean([c["ok"] for c in numeric])) if numeric else None,
-            "numeric_checks": len(numeric),
-            "tool_selection_accuracy": float(np.mean([o.tool_correct for o in outcomes])),
-            "failure_rate": float(np.mean([o.failed for o in outcomes])),
-            "latency_p50_ms": float(np.percentile(lat, 50)), "latency_p95_ms": float(np.percentile(lat, 95))}
+    out = {"questions": len(outcomes), "answer_accuracy": float(np.mean([o.correct for o in outcomes])),
+           "numerical_accuracy": float(np.mean([c["ok"] for c in numeric])) if numeric else None,
+           "numeric_checks": len(numeric),
+           "tool_selection_accuracy": float(np.mean([o.tool_correct for o in outcomes])),
+           "failure_rate": float(np.mean([o.failed for o in outcomes])),
+           "latency_p50_ms": float(np.percentile(lat, 50)), "latency_p95_ms": float(np.percentile(lat, 95))}
+    usage = [o.extra.get("usage") for o in outcomes if o.extra and o.extra.get("usage")]
+    if usage:
+        tin = float(np.mean([u.get("input_tokens", 0) for u in usage]))
+        tout = float(np.mean([u.get("output_tokens", 0) for u in usage]))
+        out.update(input_tokens_per_question=tin, output_tokens_per_question=tout)
+        if prices:
+            out["cost_usd_per_question"] = (tin * prices[0] + tout * prices[1]) / 1e6
+    return out
 
 
-def render(meta: dict, results: dict[str, list[Outcome]], fixes: str = "") -> str:
+def render(meta: dict, results: dict[str, list[Outcome]], fixes: str = "",
+           prices: tuple[float, float] | None = None) -> str:
     lines = ["# Evaluation report", "",
              f"Database: data_nature **{meta['data_nature']}**, version {meta['data_version']}, data as of "
              f"{meta['data_as_of']}. {meta['n_questions']} questions; expected answers computed independently "
@@ -165,6 +176,13 @@ def render(meta: dict, results: dict[str, list[Outcome]], fixes: str = "") -> st
                      f"{s['numerical_accuracy']:.1%} ({s['numeric_checks']} checks) | "
                      f"{s['tool_selection_accuracy']:.1%} | {s['failure_rate']:.1%} | {s['latency_p50_ms']:.0f} | "
                      f"{s['latency_p95_ms']:.0f} |")
+    for mode, outs in results.items():
+        s = summarise(outs, prices)
+        if "input_tokens_per_question" in s:
+            cost = (f", cost USD {s['cost_usd_per_question']:.4f} per question at {prices[0]}/{prices[1]} USD "
+                    "per million input/output tokens") if "cost_usd_per_question" in s else                 " (pass --price-in/--price-out for cost)"
+            lines += ["", f"{mode}: {s['input_tokens_per_question']:.0f} input and "
+                      f"{s['output_tokens_per_question']:.0f} output tokens per question{cost}."]
     missing = [m for m in ("direct", "agent") if m not in results]
     if "agent" in missing:
         lines += ["", "Agent mode not run for this report (needs ANTHROPIC_API_KEY): `python scripts/run_eval.py "
@@ -195,6 +213,6 @@ def render(meta: dict, results: dict[str, list[Outcome]], fixes: str = "") -> st
     return "\n".join(lines) + "\n"
 
 
-def to_json(meta: dict, results: dict[str, list[Outcome]]) -> str:
-    return json.dumps({"meta": meta, "summary": {m: summarise(o) for m, o in results.items()},
+def to_json(meta: dict, results: dict[str, list[Outcome]], prices: tuple[float, float] | None = None) -> str:
+    return json.dumps({"meta": meta, "summary": {m: summarise(o, prices) for m, o in results.items()},
                        "outcomes": {m: [asdict(x) for x in o] for m, o in results.items()}}, indent=1, default=str)

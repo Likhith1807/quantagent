@@ -58,10 +58,11 @@ async def _main(a) -> int:
         meta = {"data_nature": ref.meta["data_nature"], "data_version": ref.meta["data_version"],
                 "data_as_of": ref.meta["data_as_of"], "n_questions": len(questions)}
         fixes = a.fixes.read_text(encoding="utf-8") if a.fixes and a.fixes.exists() else ""
+        prices = (a.price_in, a.price_out) if a.price_in is not None and a.price_out is not None else None
         a.out_dir.mkdir(parents=True, exist_ok=True)
-        (a.out_dir / "eval_report.md").write_text(render(meta, results, fixes), encoding="utf-8")
-        (a.out_dir / "eval_results.json").write_text(to_json(meta, results), encoding="utf-8")
-        summary = {m: summarise(o) for m, o in results.items()}
+        (a.out_dir / "eval_report.md").write_text(render(meta, results, fixes, prices), encoding="utf-8")
+        (a.out_dir / "eval_results.json").write_text(to_json(meta, results, prices), encoding="utf-8")
+        summary = {m: summarise(o, prices) for m, o in results.items()}
         print(json.dumps(summary, indent=2))
         _base.set_services(None)
         return 0 if summary["direct"]["answer_accuracy"] >= a.min_accuracy else 1
@@ -75,6 +76,8 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--out-dir", type=Path, default=Path(get_settings().reports_dir))
     ap.add_argument("--fixes", type=Path, default=Path("docs") / "eval_fixes.md")
     ap.add_argument("--min-accuracy", type=float, default=1.0)
+    ap.add_argument("--price-in", type=float, default=None, help="USD per million input tokens (for cost)")
+    ap.add_argument("--price-out", type=float, default=None, help="USD per million output tokens")
     sys.exit(asyncio.run(_main(ap.parse_args(argv))))
 
 

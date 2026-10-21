@@ -1,7 +1,8 @@
 # Design decisions
 
 Why the system is built the way it is, what did not work, and what would change with better data.
-Numbers quoted here come from `reports/vol_model_report.md` and `reports/eval_report.md`.
+Numbers quoted here come from `reports/vol_model_report.md` (model `vol21-har-20261021095439`, data
+version 3) and `reports/eval_report.md`.
 
 ## 1. Why the server is read-only
 
@@ -33,16 +34,22 @@ The volatility model forecasts annualised realised volatility over the next 21 t
   few parameters. Fitted in logs and pooled across 308 schemes, it is hard to overfit.
 * **Ridge and gradient boosting** used HAR's features plus 63- and 252-day realised volatility,
   EWMA, 21- and 63-day returns and drawdown. Both were evaluated with the same walk-forward split.
-* **Result on real data** (308 schemes, 153 test months, 2014 to 2026, clean target windows):
-  HAR-RV QLIKE 0.311, against 0.338 for EWMA (-7.8%) and 0.394 for naive (-20.9%). Against naive
-  the difference is significant (DM p = 0.005); against EWMA it is not (p = 0.33). GARCH(1,1) has
-  a slightly lower mean QLIKE (0.308), but HAR-RV has the lower median QLIKE (0.104 vs 0.130) and
-  MAE, and wins in 65% of months; the DM test cannot separate them (p = 0.69). Ridge (0.326) and
-  boosting (0.341) did not beat HAR-RV.
-* **Why HAR-RV is served, not GARCH:** the two are statistically tied. HAR-RV is one pooled
-  regression with four coefficients, so a forecast is instant and identical for every scheme's
-  history. GARCH needs a per-scheme maximum-likelihood fit at request time. The selection rule picks the lowest QLIKE among HAR-RV,
-  ridge and boosting, so a future ML model is served only if it actually wins.
+* **How it was chosen:** the folds from 2014 to 2021 are a selection period. HAR-RV had the lowest
+  QLIKE there among the three regression models (0.667, against 0.731 for boosting and 0.777 for ridge),
+  so it is served. The folds from 2022 to 2026 are a test period that played no part in the choice.
+* **Result on the test period** (308 schemes, 57 months, 16,637 rows, every row scored): HAR-RV QLIKE
+  0.252, against 0.280 for EWMA (-10.3%), 0.278 for GARCH (-9.4%) and 0.366 for naive (-31%). Against
+  naive the difference is significant (DM p = 0.016); against EWMA (p = 0.20) and GARCH (p = 0.15) it is
+  not. EWMA has a lower median QLIKE than HAR-RV, so HAR-RV wins on average rather than row by row.
+  Ridge (0.267, p = 0.20) and boosting (0.297, p = 0.026, worse) did not beat HAR-RV.
+* **Why GARCH was not a serving candidate:** it needs a per-scheme maximum-likelihood fit at request
+  time, while HAR-RV is one pooled regression with four coefficients. On the selection years GARCH's
+  QLIKE was slightly lower than HAR-RV's (0.651 vs 0.667); on the test years it was higher. Restricting
+  the candidates to the regression models is a serving decision and is stated as one.
+* **Log fit and bias correction:** HAR-RV, ridge and boosting are fitted on log volatility, which keeps
+  forecasts positive and tames the skew of volatility. `exp(E[log vol])` underestimates `E[vol]`, so
+  each forecast is multiplied by Duan's smearing factor, the mean of `exp(residual)` on that fold's
+  training rows.
 * **PyTorch was not tried.** The tree model, which can fit non-linearities in the same features,
   already lost to a three-feature linear model. A neural network on the same daily features is
   unlikely to change that, and adding it would add a large dependency for no measured benefit.
@@ -60,13 +67,18 @@ The volatility model forecasts annualised realised volatility over the next 21 t
 * **Non-overlapping test origins.** Test rows are sampled every 21 observations per scheme. DM
   tests use the monthly cross-sectional mean loss with Newey-West lag 1, because adjacent months'
   targets can still overlap.
-* **Data-quality filter defined in advance.** Training excludes target windows that contain a NAV
-  flagged by the existing `check_data_quality` rules (a daily move above 15%, or 5+ identical
-  NAVs). The thresholds predate the model; results are reported both with and without the filter.
-* **Selection on the walk-forward results only.** The served model is the winner of the
-  out-of-sample comparison, then refitted on all clean rows. There is no separate hold-out year, so
-  the reported scores are slightly optimistic for the chosen model. With three candidates and a clear
-  winner, the effect is small, but it is stated here rather than hidden.
+* **Data-quality filter on training rows only.** Training excludes rows whose target window contains
+  a NAV flagged by the existing `check_data_quality` rules (a daily move above 15%, or 5+ identical
+  NAVs). Every training target ends before the fold's cut-off, so this uses only information
+  available at fit time. The thresholds predate the model.
+* **No filter on test rows that uses the future.** An earlier version dropped test rows whose target
+  window contained a suspect NAV and made that the headline. That uses information from after the
+  forecast origin, so the headline is now every test row. A second view drops rows whose scheme had a
+  suspect NAV in the year before the origin (known at forecast time); on the test years it removes no
+  rows. The ex-post filter is kept only as a labelled diagnostic.
+* **Selection and testing on different years.** An earlier version picked the served model on the
+  same folds it reported, which flatters the chosen model. Now the model is picked on 2014 to 2021 and
+  scored on 2022 to 2026. The final model is then refitted on all clean rows for serving.
 
 ## 4. What failed
 
@@ -74,15 +86,25 @@ The volatility model forecasts annualised realised volatility over the next 21 t
   boosting (gradient boosting, QLIKE 0.522) although HAR-RV beat both (0.465), so a worse model would
   have been served. The rule now includes HAR-RV. Both runs are in `reports/experiments.jsonl` and
   both versions stay in the registry.
+* **The model was chosen on its own test results, and test rows were filtered with future
+  information.** A review caught both. The fixes are the selection/test split and the all-rows
+  headline described in section 3. HAR-RV is still the choice, and its advantage over EWMA is still
+  not significant.
+* **Two tools disagreed on beta.** With real benchmarks loaded, `get_risk_metrics` and
+  `get_benchmark_comparison` gave betas of 0.951 and 0.958 for the same fund and window. The first
+  computed returns before aligning dates, pairing a two-day fund return with a one-day index return
+  whenever one series skipped a day. It now aligns prices first, and a real-data test and an
+  evaluation question check both tools against independent pandas.
 * **QLIKE was dominated by data errors.** In the first run, 1% of test rows produced 70% of the
   total EWMA QLIKE. One target window implied 579% annualised volatility (a NAV jump) and one
-  scheme had stale NAVs (0.7%). No DM test was significant even for large mean differences. The
-  clean-window rule above removes 14 of 34,649 test rows and cuts EWMA's QLIKE from 0.873 to 0.338.
-  The unfiltered numbers are still reported.
-* **Real benchmarks could not be downloaded by script.** niftyindices.com and FRED block
-  automated requests, so Nifty TRI and T-bill files are downloaded by hand and loaded with
-  `quantagent load-manual`. Until they are loaded, benchmark tools return NOT_FOUND and the
-  risk-free rate is a labelled assumption.
+  scheme had stale NAVs (0.7%). No DM test was significant even for large mean differences.
+  Dropping the 14 of 34,649 test rows whose target window contained a suspect NAV cut EWMA's QLIKE
+  from 0.873 to 0.338, but that filter used the future (see above). All 14 rows fall in 2014 to 2021, so under the current protocol they affect only the
+  selection-period scores (EWMA 1.42 there).
+* **Real benchmarks could not be downloaded by script.** niftyindices.com and RBI DBIE need a
+  browser session, so Nifty TRI and T-bill files are downloaded by hand and loaded with
+  `quantagent load-manual`. Without them, benchmark tools return NOT_FOUND and the risk-free rate is a
+  labelled assumption. The files used here were downloaded on 2026-10-21.
 * **Evaluation found two of its own bugs** (`docs/eval_fixes.md`): the independent reference
   lacked the zero-denominator rule, and the answer verifier treated scheme codes as numeric claims.
 

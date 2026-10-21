@@ -121,6 +121,10 @@ class Repository:
                          name=name, dtype=float)
 
     def risk_free_series(self) -> tuple[pd.Series | None, str | None]:
+        return self._risk_free
+
+    @cached_property
+    def _risk_free(self) -> tuple[pd.Series | None, str | None]:
         rows = self._rows(select(m.risk_free_rates).order_by(m.risk_free_rates.c.date))
         if not rows:
             return None, None

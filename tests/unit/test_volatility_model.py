@@ -94,15 +94,23 @@ def test_walk_forward_purges_training_targets(vol_db):
 
 def test_train_registry_and_tool(vol_db, tmp_path):
     root, s, repo = vol_db
-    out = run(repo, Config(first_test_year=2020, gbm={"max_iter": 50, "min_samples_leaf": 50}), root / "registry",
+    out = run(repo, Config(first_test_year=2019, holdout_years=2, gbm={"max_iter": 50, "min_samples_leaf": 50}),
+              root / "registry",
               tmp_path / "report.md", tmp_path / "exp.jsonl", tmp_path, max_schemes=6, log=lambda *a: None)
     assert set(out["models"]) == {"naive", "ewma", "har", "garch", "ridge", "gbm"}
     assert all(np.isfinite(v["qlike"]) for v in out["models"].values())
-    assert "ridge_vs_garch" in out["dm"]
+    sel = out["selected"]
+    assert sel["holdout_start"] == "2021-01-01"
+    assert out["selection"]["period"][1] < "2021-01-01" <= out["test"]["period"][0]
+    assert sel["model"] == min(sel["selection_qlike"], key=sel["selection_qlike"].get)
+    assert out["models"] == out["test"]["models"]
+    assert set(out["dm"]) == {f"{sel['model']}_vs_{m}" for m in out["models"] if m != sel["model"]}
+    assert out["test_filtered_at_origin"]["n_test"] + out["test_filtered_at_origin"]["excluded"] == out["n_test"]
     objects, config, metrics = registry.load(root / "registry")
     assert config["features"] == FEATURES and config["walk_forward"]["seed"] == 42
     assert json.loads((tmp_path / "exp.jsonl").read_text().splitlines()[0])["version"] == out["version"]
-    assert "Diebold-Mariano" in (tmp_path / "report.md").read_text()
+    report = (tmp_path / "report.md").read_text()
+    assert "Diebold-Mariano" in report and "Selection period" in report and "Diagnostic only" in report
 
     _base.set_services(_base.Services(s, repo))
     _load.cache_clear()
@@ -138,7 +146,7 @@ def test_predict_without_model(services):
 
 
 def test_suspect_days_and_clean_targets():
-    from quantagent.ml.volatility import suspect_days, target_clean
+    from quantagent.ml.volatility import suspect_before, suspect_days, target_clean
 
     r = pd.Series(0.01, index=pd.bdate_range("2024-01-01", periods=60))
     r.iloc[10] = np.log(1.2)  # +20% in a day: NAV error
@@ -149,3 +157,5 @@ def test_suspect_days_and_clean_targets():
     clean = target_clean(r, horizon=5)
     assert not clean.iloc[5] and clean.iloc[10] and not clean.iloc[29] and clean.iloc[34] and clean.iloc[40]
     assert not clean.iloc[-1]  # no complete target window
+    past = suspect_before(r, lookback=5)
+    assert not past.iloc[9] and past.iloc[10] and past.iloc[14] and not past.iloc[15]  # only looks back

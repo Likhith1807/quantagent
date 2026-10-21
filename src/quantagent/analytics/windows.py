@@ -69,8 +69,9 @@ def metric_bundle(nav: pd.Series, rf_daily: pd.Series, bench: pd.Series | None) 
         "n_shared_with_benchmark": None,
     }
     if bench is not None and len(bench) > 1:
-        rb = daily_returns(bench)
-        f, b = align(r, rb)
+        # Align levels before taking returns, so each fund/benchmark return pair spans the same dates.
+        fn, bn = align(nav, bench)
+        f, b = daily_returns(fn), daily_returns(bn)
         rf = rf_daily.reindex(f.index)
         out["n_shared_with_benchmark"] = len(f)
         if len(f) >= MIN_SHARED_OBS_REGRESSION:

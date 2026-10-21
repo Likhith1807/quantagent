@@ -100,6 +100,14 @@ class Reference:
         r = j.pct_change().dropna()
         return float((r.iloc[:, 0] - r.iloc[:, 1]).std() * np.sqrt(252))
 
+    def beta(self, code: str, index: str, years: int) -> float:
+        """Beta of daily excess returns, prices aligned on shared dates before taking returns."""
+        j = pd.concat([self.nav(code), self.bench[index]], axis=1).dropna()
+        j = j[(j.index >= self.as_of - pd.DateOffset(years=years)) & (j.index <= self.as_of)]
+        r = j.pct_change().dropna()
+        ex = r.sub(self._rf_daily(j.index).reindex(r.index), axis=0)
+        return float(ex.iloc[:, 0].cov(ex.iloc[:, 1]) / ex.iloc[:, 1].var())
+
     def realised_vol_22(self, code: str) -> float:
         r = np.log(self.nav(code)).diff().dropna()
         return float(np.sqrt(252 * (r.iloc[-22:] ** 2).mean()))

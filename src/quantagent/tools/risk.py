@@ -1,5 +1,6 @@
 from typing import Annotated
 
+import pandas as pd
 from pydantic import Field
 
 from ..analytics import MIN_SHARED_OBS_REGRESSION
@@ -54,7 +55,7 @@ def get_risk_metrics(
     if bench is None:
         warnings.append("Scheme has no benchmark series; alpha, beta and R^2 are not computed.")
     else:
-        bench_series = clip(repo.benchmark_series(bench["index_name"]), start, end)
+        bench_series = clip(repo.benchmark_series(bench["index_name"], pd.Timestamp(start).date(), pd.Timestamp(end).date()), start, end)
         if bench["index_type"] == "PRI":
             warnings.append(PRI_WARNING.format(name=bench["index_name"]))
         if repo.meta.get("data_nature") == "synthetic":
