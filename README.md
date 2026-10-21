@@ -8,8 +8,8 @@ tools over the Model Context Protocol (MCP). An LLM agent answers through those 
 in its answer is checked against the tool output it cites. A walk-forward-evaluated model forecasts
 21-day volatility. Read-only MCP server + agent + volatility model over real AMFI data.
 
-[![CI](https://github.com/Likhith1807/bluestock-quantagent/actions/workflows/ci.yml/badge.svg)](https://github.com/Likhith1807/bluestock-quantagent/actions/workflows/ci.yml)
-![coverage](https://github.com/Likhith1807/bluestock-quantagent/raw/badges/coverage.svg)
+[![CI](https://github.com/Likhith1807/quantagent/actions/workflows/ci.yml/badge.svg)](https://github.com/Likhith1807/quantagent/actions/workflows/ci.yml)
+![coverage](https://github.com/Likhith1807/quantagent/raw/badges/coverage.svg)
 ![python](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13-blue)
 ![licence](https://img.shields.io/badge/licence-MIT-green)
 
@@ -47,7 +47,7 @@ calls the server's tools and the verifier checks every number in its answer agai
 From a fresh clone to a first answer, in a clean Docker container:
 
 ```bash
-git clone https://github.com/Likhith1807/bluestock-quantagent.git && cd bluestock-quantagent
+git clone https://github.com/Likhith1807/quantagent.git && cd quantagent
 docker build -t quantagent .
 docker run --rm -v qa:/app/var quantagent setup --ter-months 1    # downloads AMFI data, ingests
 docker run --rm -v qa:/app/var quantagent tool rank_funds '{"metric": "sharpe", "period": "3y", "category": "Large Cap", "top_n": 3}'
